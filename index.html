@@ -22,34 +22,55 @@ it is corrected whenever the app changes.</p>
 <h2>What the app collects</h2>
 <ul>
   <li><strong>Your account.</strong> An email address and a password, given when you create an
-      account or sign in. The password is sent to the app's server over an encrypted connection and
-      is never stored on your phone.</li>
-  <li><strong>GHIN credentials, organisers only.</strong> If you connect a GHIN account so the app
-      can read course and handicap data, those credentials are sent to the server and stored
-      encrypted. They are never written to logs.</li>
-  <li><strong>Round data.</strong> Player names, GHIN numbers, handicap indexes, the course and
-      date, hole-by-hole scores, and the resulting settlements.</li>
+      account or sign in. The password is never stored anywhere in readable form: the server keeps
+      only a bcrypt hash of it, and it is never stored on your phone.</li>
+  <li><strong>GHIN credentials, for whoever connects a GHIN account.</strong> The password is
+      encrypted with AES-256 before it is stored. The login name you typed and the session token
+      GHIN issues are stored without encryption. None of the three is ever written to a log.</li>
+  <li><strong>Round data.</strong> Player names, GHIN numbers, course handicaps, the course and
+      date, hole-by-hole scores, and the side bets in play. What each player owes is worked out
+      from the scores each time it is shown, and is not stored.</li>
 </ul>
+
+<h2>What is sent to GHIN</h2>
+<p>When a round uses GHIN handicaps, the server sends each player's GHIN number, along with the
+course and the date, to GHIN at <code>api2.ghin.com</code>, so it can fetch that player's course
+handicap. Searching for a golfer sends the name and state you type. <strong>This happens for every
+player in a round, not only for the person who connected the GHIN account.</strong></p>
+<p>GHIN's own login requires a token from a Google Firebase endpoint, so the server requests one.
+That request carries no information about you.</p>
 
 <h2>What the app keeps on your phone</h2>
 <ul>
-  <li>A sign-in token, held in the iOS Keychain. Signing out deletes it.</li>
-  <li>A small amount of app state, such as which rounds you opened recently.</li>
+  <li>A sign-in token, held in the iOS Keychain.</li>
+  <li>Your email address, the name and GHIN number of the player you claimed, and the join codes,
+      course names and dates of your recent rounds.</li>
+  <li>Scores you entered while offline, held until the phone reconnects and sends them.</li>
 </ul>
+<p>Signing out removes the sign-in token. It does not remove the rest. Deleting the app removes all
+of it.</p>
+
+<h2>Who can see a round</h2>
+<p>Anyone holding a round's join code can open that round and see the players in it, including their
+names and GHIN numbers. No account is needed for that. Treat a join code as you would the round
+itself.</p>
 
 <h2>What the app does not do</h2>
 <ul>
   <li>No analytics, no usage tracking, no advertising identifiers, and no third-party SDKs of any
       kind.</li>
   <li>No money moves through the app. It works out what players owe each other and shows it.</li>
-  <li>Your data is not sold, and it is not shared with anyone outside the app.</li>
+  <li>Your data is not sold, and it is not used for advertising. Apart from GHIN, described above,
+      it is not sent anywhere outside this app's own server.</li>
 </ul>
 
 <h2>Where the data is held</h2>
 <p>The app's server runs on Render. The database is Neon, in the US West (Oregon) region.</p>
 
 <h2>Deleting your data</h2>
-<p>Ask the person who runs this app. Your account and its rounds will be removed.</p>
+<p>There is no delete button in the app yet. Email the address below and your account, the rounds
+you own, and the scores in them will be removed by hand. Deleting the app from your phone removes
+everything held on the phone immediately.</p>
 
 <h2>Contact</h2>
 <p><a href="mailto:support@magilicutty.com">support@magilicutty.com</a></p>
